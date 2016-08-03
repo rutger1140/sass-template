@@ -1,4 +1,8 @@
-Gulp template
+**OUTDATED** Readme file needs to be updated!
+
+**Work in progress** Current state not stable, refactoring in progress.
+
+SASS template
 =============
 
 Project kickstarter.
