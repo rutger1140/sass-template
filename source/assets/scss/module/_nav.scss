@@ -1,0 +1,15 @@
+/**
+ * Module: Nav
+ *
+ * @author: Rutger Laurman - lekkerduidelijk.nl
+ */
+
+.nav {
+  ul {
+    @include nospace;
+    list-style: none;
+  }
+  li {
+    @include nospace;
+  }
+}

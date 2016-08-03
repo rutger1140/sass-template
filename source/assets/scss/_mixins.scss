@@ -1,0 +1,39 @@
+/**
+ * Mixins
+ *
+ * @author: Rutger Laurman - lekkerduidelijk.nl
+ */
+
+// Ride on Bootstraps back
+@import "../../../node_modules/bootstrap/scss/mixins";
+
+// Media query helpers - mobile first Yo!
+
+// =============================================================================
+$media-xs: "(max-width: $screen-xs-max)"; // 768px and below
+$media-sm: "(min-width: $screen-sm)"; // tablets, 768px and up
+$media-md: "(min-width: $screen-md)"; // desktops, 992px and up
+$media-lg: "(min-width: $screen-lg)"; // large desktops, 1200px and up
+
+
+// Micro clearfix - lrdk.nl/ck
+@mixin cf {
+  zoom: 1;
+  &:before,
+  &:after {
+    content: "";
+    display: table;
+  }
+  &:after {
+    clear: both;
+  }
+}
+
+// Image replacement
+@mixin ir {
+  background-color: transparent;
+  border: 0;
+  color: transparent;
+  font: 0/0 a;
+  text-shadow: none;
+}
