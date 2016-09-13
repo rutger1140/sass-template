@@ -2,7 +2,7 @@
  * Gulp File
  *
  * @author: Rutger Laurman - lekkerduidelijk.nl
- * @url: https://github.com/lekkerduidelijk/gulp-template
+ * @url: https://github.com/lekkerduidelijk/sass-template
  *
  */
 
