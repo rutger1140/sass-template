@@ -1,10 +1,13 @@
 SASS template
 =============
 
+Project kickstarter.
+Work in progress.
+
 ## TODO
 * Fix image copy in watch
 
-Project kickstarter.
+- - - 
 
 ## Requirements
 
