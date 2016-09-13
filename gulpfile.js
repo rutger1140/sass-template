@@ -1,102 +1,72 @@
-// *************************************
-//
-//   Gulpfile
-//
-// *************************************
-//
-// Available tasks:
-//   `gulp`
-//   `gulp build`
-//   `gulp compile:coffee`
-//   `gulp compile:sass`
-//   `gulp connect`
-//   `gulp icons`
-//   `gulp images`
-//   `gulp lint:coffee`
-//   `gulp lint:sass`
-//   `gulp minify:css`
-//   `gulp minify:js`
-//   `gulp test:css`
-//   `gulp test:js`
-//
-// *************************************
+/**
+ * Gulp File
+ *
+ * @author: Rutger Laurman - lekkerduidelijk.nl
+ * @url: https://github.com/lekkerduidelijk/gulp-template
+ *
+ */
 
-// -------------------------------------
-//   Plugins
-// -------------------------------------
-//
-// gulp              : The streaming build system
-// gulp-autoprefixer : Prefix CSS
-// gulp-coffee       : Compile CoffeeScript files
-// gulp-coffeelint   : Lint your CoffeeScript
-// gulp-concat       : Concatenate files
-// gulp-connect      : Gulp plugin to run a webserver (with LiveReload)
-// gulp-csscss       : CSS redundancy analyzer
-// gulp-jshint       : JavaScript code quality tool
-// gulp-load-plugins : Automatically load Gulp plugins
-// gulp-minify-css   : Minify CSS
-// gulp-parker       : Stylesheet analysis tool
-// gulp-plumber      : Prevent pipe breaking from errors
-// gulp-rename       : Rename files
-// gulp-sass         : Compile Sass
-// gulp-sass-lint    : Lint Sass
-// gulp-svgmin       : Minify SVG files
-// gulp-svgstore     : Combine SVG files into one
-// gulp-uglify       : Minify JavaScript with UglifyJS
-// gulp-util         : Utility functions
-// gulp-watch        : Watch stream
-// run-sequence      : Run a series of dependent Gulp tasks in order
-//
-// -------------------------------------
+/* ==========================================================================
+   Load dependencies
+   ========================================================================== */
+var gulp    = require('gulp'),
+    del     = require('del'),
+    plugins = require('gulp-load-plugins')(),
+    pkg     = require('./package.json'),
+    dirs    = pkg.settings.folders,
+    run     = require('run-sequence');
 
-var gulp    = require( 'gulp' );
-var run     = require( 'run-sequence' );
-var plugins = require( 'gulp-load-plugins' )( {
 
-  rename : {
-    'gulp-minify-css' : 'cssmin',
-    'gulp-sass-lint'  : 'sasslint'
-  }
-
-} );
-
-var pkg     = require('./package.json');
-var dirs    = pkg.settings.folders;
-
-// -------------------------------------
-//   Options
-// -------------------------------------
+/* ==========================================================================
+   Options
+   ========================================================================== */
 
 var options = {
-
-  // ----- Default ----- //
 
   default : {
     tasks : [ 'build', 'connect', 'watch' ]
   },
 
-  // ----- Build ----- //
-
   build : {
-    tasks       : [ 'compile:sass', 'compile:coffee', 'minify:css', 'minify:js', 'html' ],
-    destination : dirs.dist
+    tasks: [ 'scss', 'js', 'icons', 'html', 'images', 'fonts' ]
   },
 
-  // ----- Clean ----- //
+  icons : {
+    file        : dirs.src  + '/assets/scss/icons.scss',
+    folder      : dirs.src  + '/assets/icon',
+    destination : dirs.dist + '/assets/css/'
+  },
+
+  js : {
+    file        : dirs.src  + "/assets/js/app.js",
+    files       : dirs.src  + "/assets/js/**/*.js",
+    destination : dirs.dist + "/assets/js/"
+  },
+
+  scss : {
+    file        : dirs.src  + "/assets/scss/style.scss",
+    watchFiles  : dirs.src  + "/assets/scss/**/*.scss",
+    files       : [dirs.src  + "/assets/scss/*.scss","!" + dirs.src  + "/assets/scss/icons.scss"],
+    destination : dirs.dist + "/assets/css/"
+  },
+  //
+  // copy : {
+  //   files : [
+  //     // Include all
+  //     dirs.src + '/**',
+  //
+  //     // Exclude
+  //     '!'+dirs.src +'/**/*.html',
+  //     '!'+dirs.src +'/assets/scss/**',
+  //     '!'+dirs.src +'/assets/scss',
+  //     '!'+dirs.src +'/assets/js/**'
+  //   ],
+  //   destination: dirs.dist
+  // },
 
   clean : {
     files: dirs.dist
   },
-
-  // ----- Coffee ----- //
-
-  coffee : {
-    files       : dirs.src + '/assets/coffee/*.coffee',
-    file        : 'app.js',
-    destination : dirs.dist +'/assets/js'
-  },
-
-  // ----- Connect ----- //
 
   connect : {
     port : 9000,
@@ -104,125 +74,75 @@ var options = {
     root : 'build'
   },
 
-  // ----- CSS ----- //
-
-  css : {
-    files       : dirs.dist + '/assets/css/*.css',
-    file        : dirs.dist + '/assets/css/style.css',
-    destination : dirs.dist + '/assets/css'
-  },
-
-  // ----- HTML ----- //
-
   html : {
     files           : dirs.src + '/*.html',
+    watchFiles      : dirs.src + '/**/*.html',
     file            : dirs.src + '/index.html',
     destination     : dirs.dist + '/',
     destinationFile : dirs.dist + '/index.html'
   },
 
-  // ----- Icons ----- //
-
-  icons : {
-    files       : dirs.src + '/icon/icon-*.svg',
-    destination : dirs.dist + '/build/icon'
-  },
-
-  // ----- Images ----- //
-
   images : {
-    files       : dirs.src + '/assets/img',
+    files       : dirs.src + '/assets/img/*',
     destination : dirs.dist + '/assets/img'
   },
 
-  // ----- JavaScript ----- //
-
-  js : {
-    files       : dirs.dist + '/assets/js/*.js',
-    file        : dirs.dist + '/assets/js/app.js',
-    destination : dirs.dist + '/assets/js'
+  fonts : {
+    files       : dirs.src + '/assets/font/*',
+    destination : dirs.dist + '/assets/font'
   },
-
-  // ----- Sass ----- //
-
-  sass : {
-    files       : dirs.src + '/assets/scss/*.scss',
-    destination : dirs.dist + '/assets/css'
-  },
-
-  // ----- Watch ----- //
 
   watch : {
     files : function() {
       return [
-        options.html.files,
-        options.coffee.files,
-        options.sass.files
-      ]
+        options.html.watchFiles,
+        options.js.files,
+        options.scss.watchFiles
+      ];
     },
     run : function() {
       return [
         [ 'html', 'images' ],
-        [ 'compile:coffee', 'minify:js' ],
-        [ 'compile:sass', 'minify:css' ]
-      ]
+        [ 'js'],
+        [ 'scss' ]
+      ];
     }
   }
 
+
 };
 
-// -------------------------------------
-//   Task: Default
-// -------------------------------------
 
-gulp.task( 'default', options.default.tasks );
+/* ==========================================================================
+   Helper tasks
+   ========================================================================== */
 
-// -------------------------------------
-//   Task: Build
-// -------------------------------------
+/* Clean
+   ========================================================================== */
 
-gulp.task( 'build', function() {
+gulp.task('clean', function(){
 
-  options.build.tasks.forEach( function( task ) {
-    gulp.start( task );
-  } );
+  // Delete dist folder
+  return del(options.clean.files);
+});
+
+
+/* Copy
+   ========================================================================== */
+
+// Copy
+gulp.task('copy', function(){
+  gulp.src(options.copy.files)
+
+  // Notify on error
+  .pipe(plugins.plumber({errorHandler: plugins.notify.onError("COPY: <%= error.message %>")}))
+
+  .pipe(gulp.dest(options.copy.destination));
 
 });
 
-// -------------------------------------
-//   Task: Compile: Coffee
-// -------------------------------------
-
-gulp.task( 'compile:coffee', function() {
-
-  gulp.src( options.coffee.files )
-    .pipe( plugins.plumber() )
-    .pipe( plugins.coffee( { bare: true } ) )
-    .pipe( plugins.concat( options.coffee.file ) )
-    .pipe( gulp.dest( options.coffee.destination ) );
-
-} );
-
-// -------------------------------------
-//   Task: Compile: Sass
-// -------------------------------------
-
-gulp.task( 'compile:sass', function () {
-
-  gulp.src( options.sass.files )
-    .pipe( plugins.plumber() )
-    .pipe( plugins.sass( { indentedSyntax: true } ) )
-    .pipe( plugins.autoprefixer( {
-            browsers : [ 'last 2 versions' ],
-            cascade  : false
-        } ) )
-    .pipe( gulp.dest( options.sass.destination ) );
-
-} );
-
-// -------------------------------------
-//   Task: Connect
-// -------------------------------------
+/* Connect
+   ========================================================================== */
 
 gulp.task( 'connect', function() {
 
@@ -235,132 +155,190 @@ gulp.task( 'connect', function() {
 
 });
 
-// -------------------------------------
-//   Task: HTML
-// -------------------------------------
+/* Stylesheets
+   ========================================================================== */
 
-gulp.task( 'html', function() {
+// Stylesheets
+gulp.task('scss', function () {
 
-  gulp.src( options.html.files )
-    .pipe( gulp.dest( options.html.destination ) )
-    .pipe( plugins.connect.reload() );
+  return gulp.src(options.scss.files)
+
+    // Notify on error
+    .pipe(plugins.plumber({errorHandler: plugins.notify.onError("SCSS: <%= error.message %>")}))
+
+    // SASS
+    .pipe(plugins.sass())
+
+    // Autoprefixer
+    .pipe(plugins.autoprefixer())
+    .pipe(plugins.rename({suffix: '.uncompressed'}))
+
+    // .pipe(plugins.rename('style.full.css'))
+    .pipe(gulp.dest(options.scss.destination))
+
+    // Minify
+    .pipe(plugins.cleanCss())
+    .pipe(plugins.rename(function(opt) {
+       opt.basename = opt.basename.replace(/\.uncompressed/, '');
+       return opt;
+     }))
+    .pipe(gulp.dest(options.scss.destination))
+
+    // Reload
+    .pipe( plugins.connect.reload() )
+
+    // Notify
+    .pipe(plugins.notify("SCSS complete"));
 
 });
 
-// -------------------------------------
-//   Task: Icons
-// -------------------------------------
 
-gulp.task( 'icons', function() {
+/* Javascripts
+   ========================================================================== */
 
-  gulp.src( options.icons.files )
-    .pipe( plugins.svgmin() )
-    .pipe( plugins.svgstore( { inlineSvg: true } ) )
-    .pipe( gulp.dest( options.icons.destination ) );
+gulp.task('js', function(){
+  return gulp.src(options.js.file)
+
+    // Notify on error
+    .pipe(plugins.plumber({errorHandler: plugins.notify.onError("JS: <%= error.message %>")}))
+
+    // Include files
+    .pipe(plugins.include())
+    .pipe(plugins.rename({suffix: '.combined'}))
+    .pipe(gulp.dest(options.js.destination))
+
+    // Uglify
+    .pipe(plugins.uglify())
+    .pipe(plugins.rename(function(opt) {
+       opt.basename = opt.basename.replace(/\.combined/, '.min');
+       return opt;
+     }))
+    .pipe(gulp.dest(options.js.destination))
+
+    // Reload
+    .pipe( plugins.connect.reload() )
+
+    // Notify
+    .pipe(plugins.notify("JS complete"));
 
 });
 
-// -------------------------------------
-//   Task: Images
-// -------------------------------------
+
+/* HTML
+   ========================================================================== */
+
+gulp.task('html', function(){
+  return gulp.src(options.html.files)
+
+    // Notify on error
+    .pipe(plugins.plumber({errorHandler: plugins.notify.onError("HTML: <%= error.message %>")}))
+
+    // Include files
+    .pipe(plugins.include())
+    .pipe(gulp.dest(options.html.destination))
+
+    // Reload
+    .pipe( plugins.connect.reload() )
+
+    // Notify
+    .pipe(plugins.notify("HTML complete"));
+
+});
+
+/* Images
+   ========================================================================== */
 
 gulp.task( 'images', function() {
 
-  gulp.src( options.images.files )
+  return gulp.src( options.images.files )
+
+    // Notify on error
+    .pipe(plugins.plumber({errorHandler: plugins.notify.onError("IMAGES: <%= error.message %>")}))
+
+    // Minify images
+    .pipe(plugins.imagemin())
     .pipe( gulp.dest( options.images.destination ) )
-    .pipe( plugins.connect.reload() );
+
+    // Reload
+    .pipe( plugins.connect.reload() )
+
+    // Notify
+    .pipe(plugins.notify("IMAGES complete"));
 
 });
 
-// -------------------------------------
-//   Task: Lint Coffee
-// -------------------------------------
 
-gulp.task( 'lint:coffee', function () {
+/* Icons - not used
+   ========================================================================== */
 
-  gulp.src( options.coffee.files )
-    .pipe( plugins.plumber() )
-    .pipe( plugins.coffeelint() )
-    .pipe( plugins.coffeelint.reporter() )
+gulp.task( 'icons', function() {
+  return gulp.src(options.icons.file)
 
-} );
+    // Notify on error
+    .pipe(plugins.plumber({errorHandler: plugins.notify.onError("ICONS: <%= error.message %>")}))
 
-// -------------------------------------
-//   Task: Lint Sass
-// -------------------------------------
+    // SASS
+    .pipe(plugins.sass())
 
-gulp.task( 'lint:sass', function() {
+    // Base64 inline SVG
+    .pipe(plugins.cssBase64({
+      // baseDir: options.icons.folder,
+      // extensionsAllowed: ['svg'],
+    }))
+    .pipe(gulp.dest(options.icons.destination))
 
-  gulp.src( options.sass.files )
-    .pipe( plugins.plumber() )
-    .pipe( plugins.sasslint() )
-    .pipe( plugins.sasslint.format() )
-    .pipe( plugins.sasslint.failOnError() );
+    // Minify
+    .pipe(plugins.cleanCss())
+    .pipe(plugins.rename(function(opt) {
+       opt.basename = opt.basename.replace(/\.uncompressed/, '');
+       return opt;
+     }))
+    .pipe(gulp.dest(options.icons.destination))
 
-} );
+    // Reload
+    .pipe( plugins.connect.reload() )
 
-// -------------------------------------
-//   Task: Minify: CSS
-// -------------------------------------
+    // Notify
+    .pipe(plugins.notify("ICONS complete"));
 
-gulp.task( 'minify:css', function () {
-
-  gulp.src( options.css.file )
-    .pipe( plugins.plumber() )
-    .pipe (plugins.cleanCss() )
-    .pipe( plugins.rename( { suffix: '.min' } ) )
-    .pipe( gulp.dest( options.css.destination ) )
-    .pipe( plugins.connect.reload() );
-
-} );
-
-// -------------------------------------
-//   Task: Minify: JS
-// -------------------------------------
-
-gulp.task( 'minify:js', function () {
-
-  gulp.src( options.js.file )
-    .pipe( plugins.plumber() )
-    .pipe( plugins.uglify() )
-    .pipe( plugins.rename( { suffix: '.min' } ) )
-    .pipe( gulp.dest( options.js.destination ) )
-    .pipe( plugins.connect.reload() );
-
-} );
-
-// -------------------------------------
-//   Task: Test: CSS
-// -------------------------------------
-
-gulp.task( 'test:css', function() {
-
-  gulp.src( options.css.file )
-    .pipe( plugins.plumber() )
-    .pipe( plugins.parker() );
-
-  gulp.src( options.css.file )
-    .pipe( plugins.plumber() )
-    .pipe( plugins.csscss() );
 
 });
 
-// -------------------------------------
-//   Task: Test: JS
-// -------------------------------------
+/* Fonts
+   ========================================================================== */
 
-gulp.task( 'test:js', function() {
+gulp.task( 'fonts', function() {
 
-  gulp.src( options.js.file )
-    .pipe( plugins.plumber() )
-    .pipe( plugins.jshint() )
-    .pipe( plugins.jshint.reporter( 'default' ) );
+  return gulp.src( options.fonts.files )
+    .pipe( gulp.dest( options.fonts.destination ) );
 
 });
 
-// -------------------------------------
-//   Task: Watch
-// -------------------------------------
+
+/* ==========================================================================
+   Main tasks
+   ========================================================================== */
+
+/* Default
+   ========================================================================== */
+
+ gulp.task( 'default', options.default.tasks );
+
+
+/* Build
+   ========================================================================== */
+
+gulp.task( 'build', function() {
+
+   options.build.tasks.forEach( function( task ) {
+     gulp.start( task );
+   } );
+
+});
+
+
+/* Watch
+   ========================================================================== */
 
 gulp.task( 'watch', function() {
 

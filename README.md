@@ -1,4 +1,4 @@
-Gulp template
+SASS template
 =============
 
 Project kickstarter.
@@ -8,13 +8,11 @@ Project kickstarter.
 * NodeJS
 * NPM
 * Gulp
-* Bower
 
 ## Install
 
-* Download [zip](https://github.com/lekkerduidelijk/gulp-template/archive/master.zip) and extract
+* Download [zip](https://github.com/lekkerduidelijk/sass-template/archive/master.zip) and extract
 * Run <code>npm install</code>
-* Run <code>bower install</code>
 
 ## Usage
 
@@ -26,22 +24,3 @@ Project kickstarter.
 ## Troubleshooting
 
 Stuck? Make sure to update to the latest <code>node</code> and <code>npm</code> versions.
-
-## Contains
-
-* Bower
-  * Bootstrap
-  * Modernizr
-  * Normalize CSS
-* Gulp
-  * Autoprefixer
-  * Concat
-  * Less
-  * Livereload
-  * Load-plugins
-  * Minify CSS
-  * Notify
-  * Rename
-  * Uglify
-  * Util
-  * Watch
