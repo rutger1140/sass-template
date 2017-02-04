@@ -24,7 +24,7 @@ var gulp    = require('gulp'),
 var options = {
 
   default : {
-    tasks : ['build', 'connect', 'watch'],
+    tasks : ['build', 'browserSync', 'watch'],
   },
 
   build : {
@@ -54,10 +54,8 @@ var options = {
     files: dirs.dist,
   },
 
-  connect : {
-    port : 9000,
-    base : 'http://localhost',
-    root : 'build',
+  browserSync : {
+    baseDir : 'build',
   },
 
   html : {
@@ -127,17 +125,16 @@ gulp.task('copy', function(){
 
 });
 
-/* Connect
+/* browserSync
    ========================================================================== */
 
-gulp.task( 'connect', function() {
+gulp.task( 'browserSync', function() {
 
-  plugins.connect.server( {
-    root       : [ options.connect.root ],
-    port       : options.connect.port,
-    base       : options.connect.base,
-    livereload : true,
-  } );
+  plugins.browserSync.init({
+    server: {
+      baseDir: options.connect.baseDir
+    }
+  });
 
 });
 
@@ -175,7 +172,7 @@ gulp.task('scss', function () {
     .pipe(gulp.dest(options.scss.destination))
 
     // Reload
-    .pipe( plugins.connect.reload() );
+    .pipe( plugins.browserSync.stream() );
 
 });
 
@@ -203,7 +200,7 @@ gulp.task('js', function(){
     .pipe(gulp.dest(options.js.destination))
 
     // Reload
-    .pipe( plugins.connect.reload() );
+    .pipe( plugins.browserSync.stream() );
 
 });
 
@@ -222,7 +219,7 @@ gulp.task('html', function(){
     .pipe(gulp.dest(options.html.destination))
 
     // Reload
-    .pipe( plugins.connect.reload() );
+    .pipe( plugins.browserSync.stream() );
 
 });
 
@@ -241,7 +238,7 @@ gulp.task( 'images', function() {
     .pipe( gulp.dest( options.images.destination ) )
 
     // Reload
-    .pipe( plugins.connect.reload() );
+    .pipe( plugins.browserSync.stream() );
 
 });
 
@@ -274,7 +271,7 @@ gulp.task( 'icons', function() {
     .pipe(gulp.dest(options.icons.destination))
 
     // Reload
-    .pipe( plugins.connect.reload() );
+    .pipe( plugins.browserSync.stream() );
 
 
 });
