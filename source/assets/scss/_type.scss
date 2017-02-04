@@ -36,8 +36,3 @@ $epsilon-size: 12px;
   @include font-weight-bold;
   font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
 }
-
-@mixin font-family-handwritten() {
-  @include font-weight-regular;
-  font-family: 'Caveat', "Times New Roman", serif;
-}

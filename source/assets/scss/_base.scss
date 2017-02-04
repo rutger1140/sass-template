@@ -43,10 +43,6 @@ a {
     color: $link-hover-color;
     text-decoration: underline;
   }
-
-  &:focus {
-    @include tab-focus;
-  }
 }
 
 h1,h2,h3,h4,h5,h6 {
