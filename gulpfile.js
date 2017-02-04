@@ -10,12 +10,12 @@
    Load dependencies
    ========================================================================== */
 var gulp    = require('gulp'),
+    path    = require('path'),
     del     = require('del'),
     plugins = require('gulp-load-plugins')(),
     pkg     = require('./package.json'),
     dirs    = pkg.settings.folders,
     run     = require('run-sequence');
-
 
 /* ==========================================================================
    Options
@@ -49,20 +49,6 @@ var options = {
     files       : [dirs.src  + "/assets/scss/*.scss","!" + dirs.src  + "/assets/scss/icons.scss"],
     destination : dirs.dist + "/assets/css/",
   },
-  //
-  // copy : {
-  //   files : [
-  //     // Include all
-  //     dirs.src + '/**',
-  //
-  //     // Exclude
-  //     '!'+dirs.src +'/**/*.html',
-  //     '!'+dirs.src +'/assets/scss/**',
-  //     '!'+dirs.src +'/assets/scss',
-  //     '!'+dirs.src +'/assets/js/**'
-  //   ],
-  //   destination: dirs.dist
-  // },
 
   clean : {
     files: dirs.dist,
@@ -167,7 +153,11 @@ gulp.task('scss', function () {
     .pipe(plugins.plumber({errorHandler: plugins.notify.onError("SCSS: <%= error.message %>")}))
 
     // SASS
-    .pipe(plugins.sass())
+    .pipe(plugins.sass({
+      includePaths: [
+        path.join(__dirname, 'node_modules'),
+      ],
+    }))
 
     // Autoprefixer
     .pipe(plugins.autoprefixer())
