@@ -19,85 +19,9 @@ import pkg from './package.json';
 const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
 
-
-var options = {
-
-  default : {
-    tasks : ['build', 'browserSync', 'watch'],
-  },
-
-  build : {
-    tasks: ['scss', 'js', 'icons', 'html', 'images', 'fonts'],
-  },
-
-  icons : {
-    file        : dirs.src  + '/assets/scss/icons.scss',
-    folder      : dirs.src  + '/assets/icon',
-    destination : dirs.dist + '/assets/css/',
-  },
-
-  js : {
-    file        : dirs.src  + '/assets/js/app.js',
-    files       : dirs.src  + '/assets/js/**/*.js',
-    destination : dirs.dist + '/assets/js/',
-  },
-
-  scss : {
-    file        : dirs.src  + "/assets/scss/style.scss",
-    watchFiles  : dirs.src  + "/assets/scss/**/*.scss",
-    files       : [dirs.src  + "/assets/scss/*.scss","!" + dirs.src  + "/assets/scss/icons.scss"],
-    destination : dirs.dist + "/assets/css/",
-  },
-
-  clean : {
-    files: dirs.dist,
-  },
-
-  browserSync : {
-    baseDir : 'build',
-  },
-
-  html : {
-    files           : dirs.src + '/*.html',
-    watchFiles      : dirs.src + '/**/*.html',
-    file            : dirs.src + '/index.html',
-    destination     : dirs.dist + '/',
-    destinationFile : dirs.dist + '/index.html',
-  },
-
-  images : {
-    files       : dirs.src + '/assets/img/*',
-    destination : dirs.dist + '/assets/img',
-  },
-
-  fonts : {
-    files       : dirs.src + '/assets/font/*',
-    destination : dirs.dist + '/assets/font',
-  },
-
-  watch : {
-    files : function() {
-      return [
-        options.html.watchFiles,
-        options.js.files,
-        options.scss.watchFiles,
-      ];
-    },
-    run : function() {
-      return [
-        [ 'html', 'images' ],
-        [ 'js'],
-        [ 'scss' ],
-      ];
-    },
-  },
-
-
-};
-
 // Lint JavaScript
 gulp.task('lint', () =>
-  gulp.src(['app/scripts/**/*.js','!node_modules/**'])
+  gulp.src(['source/assets/scripts/**/*.js','!node_modules/**'])
     .pipe($.eslint())
     .pipe($.eslint.format())
     .pipe($.if(!browserSync.active, $.eslint.failAfterError()))
@@ -105,21 +29,20 @@ gulp.task('lint', () =>
 
 // Optimize images
 gulp.task('images', () =>
-  gulp.src('app/images/**/*')
+  gulp.src('source/assets/images/**/*')
     .pipe($.cache($.imagemin({
       progressive: true,
       interlaced: true
     })))
-    .pipe(gulp.dest('dist/images'))
+    .pipe(gulp.dest('dist/assets/images'))
     .pipe($.size({title: 'images'}))
 );
 
 // Copy all files at the root level (app)
 gulp.task('copy', () =>
   gulp.src([
-    'app/*',
-    '!app/*.html',
-    'node_modules/apache-server-configs/dist/.htaccess'
+    'source/*',
+    '!source/*.html'
   ], {
     dot: true
   }).pipe(gulp.dest('dist'))
@@ -142,22 +65,25 @@ gulp.task('styles', () => {
 
   // For best performance, don't add Sass partials to `gulp.src`
   return gulp.src([
-    'app/styles/**/*.scss',
-    'app/styles/**/*.css'
+    'source/assets/styles/**/*.scss',
+    'source/assets/styles/**/*.css'
   ])
-    .pipe($.newer('.tmp/styles'))
+    .pipe($.newer('.tmp/assets/styles'))
     .pipe($.sourcemaps.init())
     .pipe($.sass({
-      precision: 10
+      precision: 10,
+      includePaths: [
+        path.join(__dirname, 'node_modules'),
+      ],
     }).on('error', $.sass.logError))
     .pipe($.autoprefixer(AUTOPREFIXER_BROWSERS))
-    .pipe(gulp.dest('.tmp/styles'))
+    .pipe(gulp.dest('.tmp/assets/styles'))
     // Concatenate and minify styles
     .pipe($.if('*.css', $.cssnano()))
     .pipe($.size({title: 'styles'}))
     .pipe($.sourcemaps.write('./'))
-    .pipe(gulp.dest('dist/styles'))
-    .pipe(gulp.dest('.tmp/styles'));
+    .pipe(gulp.dest('dist/assets/styles'))
+    .pipe(gulp.dest('.tmp/assets/styles'));
 });
 
 // Concatenate and minify JavaScript. Optionally transpiles ES2015 code to ES5.
@@ -168,28 +94,28 @@ gulp.task('scripts', () =>
       // Note: Since we are not using useref in the scripts build pipeline,
       //       you need to explicitly list your scripts here in the right order
       //       to be correctly concatenated
-      './app/scripts/main.js'
+      './source/assets/scripts/main.js'
       // Other scripts
     ])
-      .pipe($.newer('.tmp/scripts'))
+      .pipe($.newer('.tmp/assets/scripts'))
       .pipe($.sourcemaps.init())
       .pipe($.babel())
       .pipe($.sourcemaps.write())
-      .pipe(gulp.dest('.tmp/scripts'))
+      .pipe(gulp.dest('.tmp/assets/scripts'))
       .pipe($.concat('main.min.js'))
       .pipe($.uglify({preserveComments: 'some'}))
       // Output files
       .pipe($.size({title: 'scripts'}))
       .pipe($.sourcemaps.write('.'))
-      .pipe(gulp.dest('dist/scripts'))
-      .pipe(gulp.dest('.tmp/scripts'))
+      .pipe(gulp.dest('dist/assets/scripts'))
+      .pipe(gulp.dest('.tmp/assets/scripts'))
 );
 
 // Scan your HTML for assets & optimize them
 gulp.task('html', () => {
-  return gulp.src('app/**/*.html')
+  return gulp.src('source/**/*.html')
     .pipe($.useref({
-      searchPath: '{.tmp,app}',
+      searchPath: '{.tmp,source}',
       noAssets: true
     }))
 
@@ -225,14 +151,14 @@ gulp.task('serve', ['scripts', 'styles'], () => {
     // Note: this uses an unsigned certificate which on first access
     //       will present a certificate warning in the browser.
     // https: true,
-    server: ['.tmp', 'app'],
+    server: ['.tmp', 'source'],
     port: 3000
   });
 
-  gulp.watch(['app/**/*.html'], reload);
-  gulp.watch(['app/styles/**/*.{scss,css}'], ['styles', reload]);
-  gulp.watch(['app/scripts/**/*.js'], ['lint', 'scripts', reload]);
-  gulp.watch(['app/images/**/*'], reload);
+  gulp.watch(['source/**/*.html'], reload);
+  gulp.watch(['source/assets/styles/**/*.{scss,css}'], ['styles', reload]);
+  gulp.watch(['source/assets/scripts/**/*.js'], ['lint', 'scripts', reload]);
+  gulp.watch(['source/assets/images/**/*'], reload);
 });
 
 // Build and serve the output from the dist build

@@ -48,8 +48,6 @@ publish
 # Exclude node modules
 node_modules/
 
-# Exclude bower components
-bower_components/
-
 # Exclude build
-build/
+dist/
+.tmp
