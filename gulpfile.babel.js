@@ -32,7 +32,7 @@ gulp.task('images', () =>
   gulp.src('source/assets/images/**/*')
     .pipe($.cache($.imagemin({
       progressive: true,
-      interlaced: true
+      interlaced: true,
     })))
     .pipe(gulp.dest('dist/assets/images'))
     .pipe($.size({title: 'images'}))
@@ -42,9 +42,9 @@ gulp.task('images', () =>
 gulp.task('copy', () =>
   gulp.src([
     'source/*',
-    '!source/*.html'
+    '!source/*.html',
   ], {
-    dot: true
+    dot: true,
   }).pipe(gulp.dest('dist'))
     .pipe($.size({title: 'copy'}))
 );
@@ -60,13 +60,13 @@ gulp.task('styles', () => {
     'opera >= 23',
     'ios >= 7',
     'android >= 4.4',
-    'bb >= 10'
+    'bb >= 10',
   ];
 
   // For best performance, don't add Sass partials to `gulp.src`
   return gulp.src([
     'source/assets/styles/**/*.scss',
-    'source/assets/styles/**/*.css'
+    'source/assets/styles/**/*.css',
   ])
     .pipe($.newer('.tmp/assets/styles'))
     .pipe($.sourcemaps.init())
@@ -94,7 +94,7 @@ gulp.task('scripts', () =>
       // Note: Since we are not using useref in the scripts build pipeline,
       //       you need to explicitly list your scripts here in the right order
       //       to be correctly concatenated
-      './source/assets/scripts/main.js'
+      './source/assets/scripts/main.js',
       // Other scripts
     ])
       .pipe($.newer('.tmp/assets/scripts'))
@@ -116,20 +116,20 @@ gulp.task('html', () => {
   return gulp.src('source/**/*.html')
     .pipe($.useref({
       searchPath: '{.tmp,source}',
-      noAssets: true
+      noAssets: true,
     }))
 
     // Minify any HTML
     .pipe($.if('*.html', $.htmlmin({
       removeComments: true,
-      collapseWhitespace: true,
+      collapseWhitespace: false,
       collapseBooleanAttributes: true,
       removeAttributeQuotes: true,
       removeRedundantAttributes: true,
       removeEmptyAttributes: true,
       removeScriptTypeAttributes: true,
       removeStyleLinkTypeAttributes: true,
-      removeOptionalTags: true
+      removeOptionalTags: true,
     })))
     // Output files
     .pipe($.if('*.html', $.size({title: 'html', showFiles: true})))
@@ -152,7 +152,7 @@ gulp.task('serve', ['scripts', 'styles'], () => {
     //       will present a certificate warning in the browser.
     // https: true,
     server: ['.tmp', 'source'],
-    port: 3000
+    port: 3000,
   });
 
   gulp.watch(['source/**/*.html'], reload);
@@ -173,7 +173,7 @@ gulp.task('serve:dist', ['default'], () =>
     //       will present a certificate warning in the browser.
     // https: true,
     server: 'dist',
-    port: 3001
+    port: 3001,
   })
 );
 
@@ -190,7 +190,7 @@ gulp.task('default', ['clean'], cb =>
 gulp.task('pagespeed', cb =>
   // Update the below URL to the public URL of your site
   pagespeed('example.com', {
-    strategy: 'mobile'
+    strategy: 'mobile',
     // By default we use the PageSpeed Insights free (no API key) tier.
     // Use a Google Developer API key if you have one: http://goo.gl/RkN0vE
     // key: 'YOUR_API_KEY'
