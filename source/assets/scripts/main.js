@@ -6,14 +6,14 @@
  *
  */
 
-import 'jquery';
+// import 'jquery';
 // import 'bootstrap/dist/js/bootstrap';
 // import 'tether/dist/js/tether';
-import 'bootstrap/js/src/util';
+// import 'bootstrap/js/src/util';
 // import 'bootstrap/js/src/collapse';
 // import 'bootstrap/js/src/dropdown';
 
-/** import local dependencies */
+// import local dependencies
 import Router from './util/Router';
 import common from './routes/common';
 import home from './routes/home';
