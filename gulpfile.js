@@ -185,10 +185,7 @@ gulp.task('scss', function () {
     .pipe(gulp.dest(options.scss.destination))
 
     // Reload
-    .pipe( plugins.connect.reload() )
-
-    // Notify
-    .pipe(plugins.notify("SCSS complete"));
+    .pipe( plugins.connect.reload() );
 
 });
 
@@ -216,10 +213,7 @@ gulp.task('js', function(){
     .pipe(gulp.dest(options.js.destination))
 
     // Reload
-    .pipe( plugins.connect.reload() )
-
-    // Notify
-    .pipe(plugins.notify("JS complete"));
+    .pipe( plugins.connect.reload() );
 
 });
 
@@ -238,10 +232,7 @@ gulp.task('html', function(){
     .pipe(gulp.dest(options.html.destination))
 
     // Reload
-    .pipe( plugins.connect.reload() )
-
-    // Notify
-    .pipe(plugins.notify("HTML complete"));
+    .pipe( plugins.connect.reload() );
 
 });
 
@@ -260,10 +251,7 @@ gulp.task( 'images', function() {
     .pipe( gulp.dest( options.images.destination ) )
 
     // Reload
-    .pipe( plugins.connect.reload() )
-
-    // Notify
-    .pipe(plugins.notify("IMAGES complete"));
+    .pipe( plugins.connect.reload() );
 
 });
 
@@ -296,10 +284,7 @@ gulp.task( 'icons', function() {
     .pipe(gulp.dest(options.icons.destination))
 
     // Reload
-    .pipe( plugins.connect.reload() )
-
-    // Notify
-    .pipe(plugins.notify("ICONS complete"));
+    .pipe( plugins.connect.reload() );
 
 
 });
