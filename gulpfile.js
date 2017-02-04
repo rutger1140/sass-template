@@ -24,30 +24,30 @@ var gulp    = require('gulp'),
 var options = {
 
   default : {
-    tasks : [ 'build', 'connect', 'watch' ]
+    tasks : ['build', 'connect', 'watch'],
   },
 
   build : {
-    tasks: [ 'scss', 'js', 'icons', 'html', 'images', 'fonts' ]
+    tasks: ['scss', 'js', 'icons', 'html', 'images', 'fonts'],
   },
 
   icons : {
     file        : dirs.src  + '/assets/scss/icons.scss',
     folder      : dirs.src  + '/assets/icon',
-    destination : dirs.dist + '/assets/css/'
+    destination : dirs.dist + '/assets/css/',
   },
 
   js : {
-    file        : dirs.src  + "/assets/js/app.js",
-    files       : dirs.src  + "/assets/js/**/*.js",
-    destination : dirs.dist + "/assets/js/"
+    file        : dirs.src  + '/assets/js/app.js',
+    files       : dirs.src  + '/assets/js/**/*.js',
+    destination : dirs.dist + '/assets/js/',
   },
 
   scss : {
     file        : dirs.src  + "/assets/scss/style.scss",
     watchFiles  : dirs.src  + "/assets/scss/**/*.scss",
     files       : [dirs.src  + "/assets/scss/*.scss","!" + dirs.src  + "/assets/scss/icons.scss"],
-    destination : dirs.dist + "/assets/css/"
+    destination : dirs.dist + "/assets/css/",
   },
   //
   // copy : {
@@ -65,13 +65,13 @@ var options = {
   // },
 
   clean : {
-    files: dirs.dist
+    files: dirs.dist,
   },
 
   connect : {
     port : 9000,
     base : 'http://localhost',
-    root : 'build'
+    root : 'build',
   },
 
   html : {
@@ -79,17 +79,17 @@ var options = {
     watchFiles      : dirs.src + '/**/*.html',
     file            : dirs.src + '/index.html',
     destination     : dirs.dist + '/',
-    destinationFile : dirs.dist + '/index.html'
+    destinationFile : dirs.dist + '/index.html',
   },
 
   images : {
     files       : dirs.src + '/assets/img/*',
-    destination : dirs.dist + '/assets/img'
+    destination : dirs.dist + '/assets/img',
   },
 
   fonts : {
     files       : dirs.src + '/assets/font/*',
-    destination : dirs.dist + '/assets/font'
+    destination : dirs.dist + '/assets/font',
   },
 
   watch : {
@@ -97,17 +97,17 @@ var options = {
       return [
         options.html.watchFiles,
         options.js.files,
-        options.scss.watchFiles
+        options.scss.watchFiles,
       ];
     },
     run : function() {
       return [
         [ 'html', 'images' ],
         [ 'js'],
-        [ 'scss' ]
+        [ 'scss' ],
       ];
-    }
-  }
+    },
+  },
 
 
 };
@@ -150,7 +150,7 @@ gulp.task( 'connect', function() {
     root       : [ options.connect.root ],
     port       : options.connect.port,
     base       : options.connect.base,
-    livereload : true
+    livereload : true,
   } );
 
 });
