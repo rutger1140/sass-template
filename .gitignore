@@ -50,3 +50,6 @@ node_modules/
 
 # Exclude bower components
 bower_components/
+
+# Exclude build
+build/
