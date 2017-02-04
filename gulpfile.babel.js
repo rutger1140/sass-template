@@ -113,11 +113,16 @@ gulp.task('scripts', () =>
 
 // Scan your HTML for assets & optimize them
 gulp.task('html', () => {
-  return gulp.src('source/**/*.html')
+  return gulp.src(['source/**/*.html', '!source/partials/*.html'])
+    .pipe($.fileInclude({
+      prefix: '@@',
+      basepath: '@file',
+     }))
     .pipe($.useref({
       searchPath: '{.tmp,source}',
       noAssets: true,
     }))
+    .pipe(gulp.dest('.tmp/'))
 
     // Minify any HTML
     .pipe($.if('*.html', $.htmlmin({
@@ -140,11 +145,11 @@ gulp.task('html', () => {
 gulp.task('clean', () => del(['.tmp', 'dist/*', '!dist/.git'], {dot: true}));
 
 // Watch files for changes & reload
-gulp.task('serve', ['scripts', 'styles'], () => {
+gulp.task('serve', ['scripts', 'styles', 'html'], () => {
   browserSync({
     notify: false,
     // Customize the Browsersync console logging prefix
-    logPrefix: 'WSK',
+    logPrefix: 'BS',
     // Allow scroll syncing across breakpoints
     // scrollElementMapping: ['main', '.mdl-layout'],
     // Run as an https by uncommenting 'https: true'
@@ -155,7 +160,7 @@ gulp.task('serve', ['scripts', 'styles'], () => {
     port: 3000,
   });
 
-  gulp.watch(['source/**/*.html'], reload);
+  gulp.watch(['source/**/*.html'], ['html', reload]);
   gulp.watch(['source/assets/styles/**/*.{scss,css}'], ['styles', reload]);
   gulp.watch(['source/assets/scripts/**/*.js'], ['lint', 'scripts', reload]);
   gulp.watch(['source/assets/images/**/*'], reload);
@@ -165,9 +170,9 @@ gulp.task('serve', ['scripts', 'styles'], () => {
 gulp.task('serve:dist', ['default'], () =>
   browserSync({
     notify: false,
-    logPrefix: 'WSK',
+    logPrefix: 'BS',
     // Allow scroll syncing across breakpoints
-    scrollElementMapping: ['main', '.mdl-layout'],
+    // scrollElementMapping: ['main', '.mdl-layout'],
     // Run as an https by uncommenting 'https: true'
     // Note: this uses an unsigned certificate which on first access
     //       will present a certificate warning in the browser.
