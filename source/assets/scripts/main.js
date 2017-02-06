@@ -6,10 +6,12 @@
  *
  */
 
+import $ from 'jquery';
 // import 'jquery';
 // import 'bootstrap/dist/js/bootstrap';
 // import 'tether/dist/js/tether';
-// import 'bootstrap/js/src/util';
+// import Utils from 'bootstrap/js/src/util';
+// import Collapse from 'bootstrap/js/src/collapse';
 // import 'bootstrap/js/src/collapse';
 // import 'bootstrap/js/src/dropdown';
 
@@ -18,6 +20,7 @@ import Router from './util/Router';
 import common from './routes/common';
 import home from './routes/home';
 
+// var jQuery = $;
 
 /**
  * Populate Router instance with DOM routes
@@ -31,4 +34,4 @@ const routes = new Router({
 });
 
 /** Load Events */
-jQuery(document).ready(() => routes.loadEvents());
+$(document).ready(() => routes.loadEvents());

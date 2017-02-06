@@ -16,6 +16,13 @@ import gulpLoadPlugins from 'gulp-load-plugins';
 import {output as pagespeed} from 'psi';
 import pkg from './package.json';
 
+// import browserify from 'browserify';
+// import babelify from 'babelify';
+// import vinylBuffer from 'vinyl-buffer'
+// import vinylSourceStream from 'vinyl-source-stream'
+import commonjs from 'rollup-plugin-commonjs';
+import nodeResolve from 'rollup-plugin-node-resolve';
+
 const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
 
@@ -89,27 +96,57 @@ gulp.task('styles', () => {
 // Concatenate and minify JavaScript. Optionally transpiles ES2015 code to ES5.
 // to enable ES2015 support remove the line `"only": "gulpfile.babel.js",` in the
 // `.babelrc` file.
-gulp.task('scripts', () =>
-    gulp.src([
-      // Note: Since we are not using useref in the scripts build pipeline,
-      //       you need to explicitly list your scripts here in the right order
-      //       to be correctly concatenated
-      './source/assets/scripts/main.js',
-      // Other scripts
-    ])
-      .pipe($.newer('.tmp/assets/scripts'))
-      .pipe($.sourcemaps.init())
-      .pipe($.babel())
-      .pipe($.sourcemaps.write())
-      .pipe(gulp.dest('.tmp/assets/scripts'))
-      .pipe($.concat('main.min.js'))
-      .pipe($.uglify({preserveComments: 'some'}))
-      // Output files
-      .pipe($.size({title: 'scripts'}))
-      .pipe($.sourcemaps.write('.'))
-      .pipe(gulp.dest('dist/assets/scripts'))
-      .pipe(gulp.dest('.tmp/assets/scripts'))
-);
+gulp.task('scripts', () => {
+
+  gulp.src([
+    // Note: Since we are not using useref in the scripts build pipeline,
+    //       you need to explicitly list your scripts here in the right order
+    //       to be correctly concatenated
+    './source/assets/scripts/**/*.js',
+    // Other scripts
+  ])
+
+  .pipe($.rollup({
+      entry: './source/assets/scripts/main.js',
+      format: 'iife',
+      plugins: [
+        $.babel({
+          presets: [
+            [
+              "es2015", {
+                "modules": false,
+              },
+            ],
+          ],
+          include: './node_modules/**',
+          babelrc: false,
+        }),
+        nodeResolve({
+          jsnext: true,
+          main: true,
+        }),
+        commonjs({
+          include: 'node_modules/**',
+          namedExports: {
+            'node_modules/jquery/dist/jquery.min.js': [ 'jquery' ],
+          },
+        }),
+      ],
+  }))
+
+    .pipe($.newer('.tmp/assets/scripts'))
+    .pipe($.sourcemaps.init())
+    .pipe($.babel())
+    .pipe($.sourcemaps.write())
+    .pipe(gulp.dest('.tmp/assets/scripts'))
+    .pipe($.concat('main.min.js'))
+    .pipe($.uglify({preserveComments: 'some'}))
+    // Output files
+    .pipe($.size({title: 'scripts'}))
+    .pipe($.sourcemaps.write('.'))
+    .pipe(gulp.dest('dist/assets/scripts'))
+    .pipe(gulp.dest('.tmp/assets/scripts'))
+});
 
 // Scan your HTML for assets & optimize them
 gulp.task('html', () => {
@@ -160,9 +197,10 @@ gulp.task('serve', ['scripts', 'styles', 'html'], () => {
     port: 3000,
   });
 
-  gulp.watch(['source/**/*.html'], ['html', reload]);
+  gulp.watch(['source/**/*.html'], ['html'. reload]);
   gulp.watch(['source/assets/styles/**/*.{scss,css}'], ['styles', reload]);
   gulp.watch(['source/assets/scripts/**/*.js'], ['lint', 'scripts', reload]);
+  // gulp.watch(['source/assets/scripts/**/*.js'], ['scripts', reload]);
   gulp.watch(['source/assets/images/**/*'], reload);
 });
 
@@ -172,7 +210,7 @@ gulp.task('serve:dist', ['default'], () =>
     notify: false,
     logPrefix: 'BS',
     // Allow scroll syncing across breakpoints
-    // scrollElementMapping: ['main', '.mdl-layout'],
+    scrollElementMapping: ['main', '.mdl-layout'],
     // Run as an https by uncommenting 'https: true'
     // Note: this uses an unsigned certificate which on first access
     //       will present a certificate warning in the browser.
