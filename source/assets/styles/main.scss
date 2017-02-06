@@ -4,26 +4,6 @@
  * @author: Rutger Laurman - lekkerduidelijk.nl
  */
 
-// Import normalize
-@import "../../../node_modules/bootstrap/scss/normalize";
-
-// Settings
-@import "variables";
-
-// Base
-@import "mixins";
-@import "fonts";
-@import "type";
-@import "base";
-@import "helpers";
-
-// Layout
-@import "layout/grid";
-// @import "layout/l-header";
-// @import "layout/l-footer";
-
-// Module - generic
-// @import "module/nav";
-
-// Module - specific
-// @import "module/branding";
+@import "common/common";
+@import "components/components";
+@import "layout/layout";
