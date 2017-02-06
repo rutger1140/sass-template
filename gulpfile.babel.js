@@ -2,11 +2,6 @@
 
 'use strict';
 
-// This gulpfile makes use of new JavaScript features.
-// Babel handles this without us having to do anything. It just works.
-// You can read more about the new JavaScript features here:
-// https://babeljs.io/docs/learn-es2015/
-
 import path from 'path';
 import gulp from 'gulp';
 import del from 'del';
@@ -14,7 +9,7 @@ import runSequence from 'run-sequence';
 import browserSync from 'browser-sync';
 import gulpLoadPlugins from 'gulp-load-plugins';
 import {output as pagespeed} from 'psi';
-import pkg from './package.json';
+// import pkg from './package.json';
 
 const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
@@ -89,35 +84,46 @@ gulp.task('styles', () => {
 // Concatenate and minify JavaScript. Optionally transpiles ES2015 code to ES5.
 // to enable ES2015 support remove the line `"only": "gulpfile.babel.js",` in the
 // `.babelrc` file.
-gulp.task('scripts', () =>
-    gulp.src([
-      // Note: Since we are not using useref in the scripts build pipeline,
-      //       you need to explicitly list your scripts here in the right order
-      //       to be correctly concatenated
-      './source/assets/scripts/main.js',
-      // Other scripts
-    ])
-      .pipe($.newer('.tmp/assets/scripts'))
-      .pipe($.sourcemaps.init())
-      .pipe($.babel())
-      .pipe($.sourcemaps.write())
-      .pipe(gulp.dest('.tmp/assets/scripts'))
-      .pipe($.concat('main.min.js'))
-      .pipe($.uglify({preserveComments: 'some'}))
-      // Output files
-      .pipe($.size({title: 'scripts'}))
-      .pipe($.sourcemaps.write('.'))
-      .pipe(gulp.dest('dist/assets/scripts'))
-      .pipe(gulp.dest('.tmp/assets/scripts'))
-);
+gulp.task('scripts', () => {
+
+  const includeOptions = {
+    extensions: "js",
+    includePaths: [
+      path.join(__dirname, 'node_modules'),
+    ],
+  };
+
+  return gulp.src([
+    // Javascript files are included with gulp-include
+    './source/assets/scripts/main.js',
+  ])
+  .pipe($.include(includeOptions))
+  .pipe($.newer('.tmp/assets/scripts'))
+  .pipe($.sourcemaps.init())
+  .pipe($.babel())
+  .pipe($.sourcemaps.write())
+  .pipe(gulp.dest('.tmp/assets/scripts'))
+  .pipe($.concat('main.min.js'))
+  .pipe($.uglify({preserveComments: 'some'}))
+  // Output files
+  .pipe($.size({title: 'scripts'}))
+  .pipe($.sourcemaps.write('.'))
+  .pipe(gulp.dest('dist/assets/scripts'))
+  .pipe(gulp.dest('.tmp/assets/scripts'))
+});
 
 // Scan your HTML for assets & optimize them
 gulp.task('html', () => {
+
+  const includeOptions = {
+    extensions: "html",
+    includePaths: [
+      path.join(__dirname, 'source/partials'),
+    ],
+  };
+
   return gulp.src(['source/**/*.html', '!source/partials/*.html'])
-    .pipe($.fileInclude({
-      prefix: '@@',
-      basepath: '@file',
-     }))
+    .pipe($.include(includeOptions))
     .pipe($.useref({
       searchPath: '{.tmp,source}',
       noAssets: true,

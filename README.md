@@ -4,29 +4,26 @@ SASS template
 Project kickstarter.
 Work in progress.
 
-## TODO
-* Fix image copy in watch
-
-- - - 
+- - -
 
 ## Requirements
 
-* NodeJS
-* NPM
+* Yarn
 * Gulp
 
 ## Install
 
 * Download [zip](https://github.com/lekkerduidelijk/sass-template/archive/master.zip) and extract
-* Run <code>npm install</code>
+* Run <code>yarn</code>
 
 ## Usage
 
 * Update <code>package.json</code> with name, version and author
-* Run <code>gulp</code> to build and watch
-* Run <code>gulp build</code> to build production code
-* Run <code>gulp watch</code> to watch files
+* Run <code>gulp</code> to build
+* Run <code>gulp serve</code> to build and watch with browsersync
+* Run <code>gulp pagespeed</code> to check your dist with Google Pagespeed
+
 
 ## Troubleshooting
 
-Stuck? Make sure to update to the latest <code>node</code> and <code>npm</code> versions.
+Stuck? Make sure to update to the latest <code>node</code> and <code>yarn</code> versions.
