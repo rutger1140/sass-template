@@ -7,12 +7,14 @@
  */
 
 import $ from 'jquery';
+// window.jQuery = $;
+
 // import 'jquery';
 // import 'bootstrap/dist/js/bootstrap';
 // import 'tether/dist/js/tether';
 // import Utils from 'bootstrap/js/src/util';
 // import Collapse from 'bootstrap/js/src/collapse';
-// import 'bootstrap/js/src/collapse';
+import 'bootstrap';
 // import 'bootstrap/js/src/dropdown';
 
 // import local dependencies
@@ -20,7 +22,6 @@ import Router from './util/Router';
 import common from './routes/common';
 import home from './routes/home';
 
-// var jQuery = $;
 
 /**
  * Populate Router instance with DOM routes

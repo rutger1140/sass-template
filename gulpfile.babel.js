@@ -21,7 +21,14 @@ import pkg from './package.json';
 // import vinylBuffer from 'vinyl-buffer'
 // import vinylSourceStream from 'vinyl-source-stream'
 import commonjs from 'rollup-plugin-commonjs';
+import babelHelpers from 'babel-plugin-external-helpers';
 import nodeResolve from 'rollup-plugin-node-resolve';
+import babel from 'rollup-plugin-babel';
+import includePaths from 'rollup-plugin-includepaths';
+import rollup from 'rollup-stream';
+import source from 'vinyl-source-stream';
+import buffer from 'vinyl-buffer';
+import inject from 'rollup-plugin-inject';
 
 const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
@@ -98,54 +105,68 @@ gulp.task('styles', () => {
 // `.babelrc` file.
 gulp.task('scripts', () => {
 
-  gulp.src([
-    // Note: Since we are not using useref in the scripts build pipeline,
-    //       you need to explicitly list your scripts here in the right order
-    //       to be correctly concatenated
-    './source/assets/scripts/**/*.js',
-    // Other scripts
-  ])
+  const includePathOptions = {
+    paths: ['source/scripts'],
+  };
 
-  .pipe($.rollup({
+  const nodeResolveOptions = {
+    browser: true,
+    preferBuiltins: false,
+  };
+
+  const injectOptions = {
+    include: '**/*.js',
+    exclude: 'node_modules/**',
+    jQuery: 'jquery',
+  };
+
+  // gulp.src([
+    // Note: Since we are not using useref in the scripts build pipeline,
+          // you need to explicitly list your scripts here in the right order
+          // to be correctly concatenated
+//
+    // './source/assets/scripts/**/*.js',
+    // Other scripts
+  // ])
+
+  return rollup({
       entry: './source/assets/scripts/main.js',
       format: 'iife',
       plugins: [
-        $.babel({
+        inject(injectOptions),
+        nodeResolve(nodeResolveOptions),
+        commonjs(),
+        babel({
           presets: [
-            [
-              "es2015", {
-                "modules": false,
-              },
-            ],
+            ["es2015", { "modules": false } ],
           ],
-          include: './node_modules/**',
+          exclude: 'node_modules/**',
           babelrc: false,
+          plugins: [
+            babelHelpers,
+          ],
         }),
-        nodeResolve({
-          jsnext: true,
-          main: true,
-        }),
-        commonjs({
-          include: 'node_modules/**',
-          namedExports: {
-            'node_modules/jquery/dist/jquery.min.js': [ 'jquery' ],
-          },
-        }),
-      ],
-  }))
+        includePaths(includePathOptions),
 
-    .pipe($.newer('.tmp/assets/scripts'))
-    .pipe($.sourcemaps.init())
-    .pipe($.babel())
-    .pipe($.sourcemaps.write())
-    .pipe(gulp.dest('.tmp/assets/scripts'))
-    .pipe($.concat('main.min.js'))
-    .pipe($.uglify({preserveComments: 'some'}))
-    // Output files
-    .pipe($.size({title: 'scripts'}))
-    .pipe($.sourcemaps.write('.'))
-    .pipe(gulp.dest('dist/assets/scripts'))
-    .pipe(gulp.dest('.tmp/assets/scripts'))
+      ],
+  })
+  .pipe(source('main.js','./source/assets/scripts'))
+  .pipe(gulp.dest('.tmp/assets/scripts'))
+
+  .pipe(buffer())
+
+  .pipe($.newer('.tmp/assets/scripts'))
+  .pipe($.sourcemaps.init())
+  .pipe($.babel())
+  .pipe($.sourcemaps.write())
+  .pipe(gulp.dest('.tmp/assets/scripts'))
+  .pipe($.concat('main.min.js'))
+  .pipe($.uglify({preserveComments: 'some'}))
+  // Output files
+  .pipe($.size({title: 'scripts'}))
+  .pipe($.sourcemaps.write('.'))
+  .pipe(gulp.dest('dist/assets/scripts'))
+  .pipe(gulp.dest('.tmp/assets/scripts'))
 });
 
 // Scan your HTML for assets & optimize them
